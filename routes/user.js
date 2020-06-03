@@ -8,7 +8,8 @@ router.post("/Register", async (req, res, next) => {
     // parameters exists
     // valid parameters
     // username exists
-    const users = await DButils.execQuery("SELECT username FROM users");
+    //TODO: change table name 
+    const users = await DButils.execQuery("SELECT UserName FROM User");
 
     if (users.find((x) => x.username === req.body.username))
       throw { status: 409, message: "Username taken" };
@@ -18,8 +19,16 @@ router.post("/Register", async (req, res, next) => {
       req.body.password,
       parseInt(process.env.bcrypt_saltRounds)
     );
+    //TODO: insert to Login table without password
+    //,  '${req.body.profilephoto}'
     await DButils.execQuery(
-      `INSERT INTO users VALUES (default, '${req.body.username}', '${hash_password}')`
+      `INSERT INTO User VALUES (default, '${req.body.username}', '${req.body.firstname}' ,'${req.body.lastname}',  '${req.body.country}', 
+      '${req.body.email}')`
+    );
+
+    //TODO: insert to users table including password
+    await DButils.execQuery(
+      `INSERT INTO Login VALUES (default, '${req.body.username}', '${hash_password}')`
     );
     res.status(201).send({ message: "user created", success: true });
   } catch (error) {
@@ -30,7 +39,7 @@ router.post("/Register", async (req, res, next) => {
 router.post("/Login", async (req, res, next) => {
   try {
     // check that username exists
-    const users = await DButils.execQuery("SELECT username FROM users");
+    const users = await DButils.execQuery("SELECT UserName FROM User");
     if (!users.find((x) => x.username === req.body.username))
       throw { status: 401, message: "Username or Password incorrect" };
 
