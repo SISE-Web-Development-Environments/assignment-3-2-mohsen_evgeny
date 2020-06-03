@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-const DButils = require("../modules/DButils");
+const DButils = require("./utils/DButils");
 
 router.use(function requireLogin(req, res, next) {
   if (!req.user_id) {

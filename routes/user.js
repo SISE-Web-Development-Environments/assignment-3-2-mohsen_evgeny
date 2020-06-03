@@ -1,74 +1,26 @@
 var express = require("express");
 var router = express.Router();
-const DButils = require("../modules/DButils");
+const DButils = require("./utils/DButils");
 const bcrypt = require("bcrypt");
 
-router.post("/Register", async (req, res, next) => {
-  try {
-    // parameters exists
-    // valid parameters
-    // username exists
-    //TODO: change table name 
-    const users = await DButils.execQuery("SELECT UserName FROM User");
+// Authentication - using cookie 
+router.use((req, res, next) =>{
+  if(req.session && req.session.id){
+    const id = req.session.id;
+    const user = req. checkIdOnDb(id); // TODO: build function
 
-    if (users.find((x) => x.username === req.body.username))
-      throw { status: 409, message: "Username taken" };
-
-    // add the new username
-    let hash_password = bcrypt.hashSync(
-      req.body.password,
-      parseInt(process.env.bcrypt_saltRounds)
-    );
-    //TODO: insert to Login table without password
-    //,  '${req.body.profilephoto}'
-    await DButils.execQuery(
-      `INSERT INTO User VALUES (default, '${req.body.username}', '${req.body.firstname}' ,'${req.body.lastname}',  '${req.body.country}', 
-      '${req.body.email}')`
-    );
-
-    //TODO: insert to users table including password
-    await DButils.execQuery(
-      `INSERT INTO Login VALUES (default, '${req.body.username}', '${hash_password}')`
-    );
-    res.status(201).send({ message: "user created", success: true });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.post("/Login", async (req, res, next) => {
-  try {
-    // check that username exists
-    const users = await DButils.execQuery("SELECT UserName FROM User");
-    if (!users.find((x) => x.username === req.body.username))
-      throw { status: 401, message: "Username or Password incorrect" };
-
-    // check that the password is correct
-    const user = (
-      await DButils.execQuery(
-        `SELECT * FROM users WHERE username = '${req.body.username}'`
-      )
-    )[0];
-
-    if (!bcrypt.compareSync(req.body.password, user.password)) {
-      throw { status: 401, message: "Username or Password incorrect" };
+    if(user){
+      req.user = user;
+      next(); // if true go to the next relative endpoint
     }
-
-    // Set cookie
-    req.session.user_id = user.user_id;
-    // req.session.save();
-    // res.cookie(session_options.cookieName, user.user_id, cookies_options);
-
-    // return cookie
-    res.status(200).send({ message: "login succeeded", success: true });
-  } catch (error) {
-    next(error);
   }
+  res.sendStatus(401);
 });
 
-router.post("/Logout", function (req, res) {
-  req.session.reset(); // reset the session info --> send cookie when  req.session == undefined!!
-  res.send({ success: true, message: "logout succeeded" });
+router.get("/user/recipeInfo/{ids}", (req, res) => {
+  const ids = req.params.ids;
+  const user_name = req.user;
+  getUserInfoOnRecipes(user_name, ids); // TODO: build function 
 });
 
 module.exports = router;

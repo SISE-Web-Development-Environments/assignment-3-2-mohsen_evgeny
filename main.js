@@ -4,7 +4,7 @@ var express = require("express");
 var path = require("path");
 var logger = require("morgan");
 const session = require("client-sessions");
-const DButils = require("../assignment-3-2-mohsen_evgeny/modules/DButils");
+const DButils = require("./routes/utils/DButils");
 
 var app = express();
 app.use(logger("dev")); //logger
@@ -26,6 +26,7 @@ var port = process.env.PORT || "3000";
 const user = require("./routes/user");
 const profile = require("./routes/profile");
 const recipes = require("./routes/recipes");
+const auth = require("./routes/auth");
 
 //#region cookie middleware
 app.use(function (req, res, next) {
@@ -44,11 +45,17 @@ app.use(function (req, res, next) {
 });
 //#endregion
 
-app.get("/", (req, res) => res.send("welcome"));
+app.get("/alive", (req, res) => res.send("I'm alive"));
 
 app.use("/user", user);
-app.use("/profile", profile);
+app.use("/profile", profile); // TODO: delete?
 app.use("/recipes", recipes);
+app.use(auth);
+
+//Default router --- not found
+app.use((req, res) => {
+  res.sendStatus(404);
+});
 
 app.use(function (err, req, res, next) {
   console.error(err);
