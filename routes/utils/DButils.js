@@ -19,6 +19,8 @@ const poolConnect = pool
   .then(() => console.log("new connection pool Created"))
   .catch((err) => console.log(err));
 
+
+// -------------------- call DB ---------------------
 exports.execQuery = async function (query) {
   await poolConnect;
   try {
@@ -30,6 +32,10 @@ exports.execQuery = async function (query) {
   }
 };
 
+//---------------------- DB queries ---------------------------------
+exports.checkUserNameOnDb = async function (username){
+  return await this.execQuery( `SELECT * FROM [Login] WHERE UserName = '${username}'`);
+}
 // process.on("SIGINT", function () {
 //   if (pool) {
 //     pool.close(() => console.log("connection pool closed"));
