@@ -35,7 +35,7 @@ app.use(function (req, res, next) {
       .then((users) => {
         if (users.find((x) => x.user_id === req.session.user_id)) {
           req.user_id = req.session.user_id;
-        }
+        }//
         next();
       })
       .catch((error) => next());
