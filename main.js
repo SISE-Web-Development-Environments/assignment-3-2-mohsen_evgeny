@@ -22,16 +22,16 @@ app.use(express.urlencoded({ extended: false })); // parse application/x-www-for
 app.use(express.static(path.join(__dirname, "public"))); //To serve static files such as images, CSS files, and JavaScript files
 
 var port = process.env.PORT || "3000";
-//#endregion
+//------------------------- routes ------------------------------------------
 const user = require("./routes/user");
 const profile = require("./routes/profile");
 const recipes = require("./routes/recipes");
 const auth = require("./routes/auth");
 
-//#region cookie middleware
+// ------------------- Authentication - using cookie ------------------
 app.use(function (req, res, next) {
   if (req.session && req.session.user_id) {
-    DButils.execQuery("SELECT user_id FROM users")
+    DButils.execQuery("SELECT UserName FROM [Login]")
       .then((users) => {
         if (users.find((x) => x.user_id === req.session.user_id)) {
           req.user_id = req.session.user_id;
@@ -43,8 +43,8 @@ app.use(function (req, res, next) {
     next();
   }
 });
-//#endregion
 
+//--------------------- EndPoints ----------------------
 app.get("/alive", (req, res) => res.send("I'm alive"));
 
 app.use("/user", user);

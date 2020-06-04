@@ -3,30 +3,26 @@ var router = express.Router();
 const DButils = require("./utils/DButils");
 const bcrypt = require("bcrypt");
 
+//--------------------- EndPoints ----------------------
+
 router.post("/Register", async (req, res, next) => {
   try {
-    // parameters exists
-    // valid parameters
-    // username exists
-    //TODO: change table name 
     const users = await DButils.execQuery("SELECT UserName FROM [User]");
 
     if (users.find((x) => x.username === req.body.username))
       throw { status: 409, message: "Username taken" };
 
-    // add the new username
+    // hash the password given
     let hash_password = bcrypt.hashSync(
       req.body.password,
       parseInt(process.env.bcrypt_saltRounds)
     );
-    //TODO: insert to Login table without password
-    //,  '${req.body.profilephoto}'
+    // User table
     await DButils.execQuery(
       `INSERT INTO [User] VALUES ('${req.body.username}', '${req.body.firstname}' ,'${req.body.lastname}',  '${req.body.country}', 
       '${req.body.email}', '${req.body.image}')`
     );
-
-    //TODO: insert to users table including password
+    //Login table
     await DButils.execQuery(
       `INSERT INTO [Login] VALUES ('${req.body.username}', '${hash_password}')`
     );
@@ -77,4 +73,6 @@ router.post("/Logout", function (req, res) {
 router.use((req, res) => {
   res.sendStatus(404);
 });
+
+
 module.exports = router;
