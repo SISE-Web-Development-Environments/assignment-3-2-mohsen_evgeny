@@ -68,6 +68,12 @@ async function getUserInfoOnRecipes(username, ids){
   return info;
 }
 
+exports.getUserFavoriteRecipes = async function (userId){ // TODO : change
+  //select RecipeApiId from [dbo].[UserRecipe] where UserId = 'f6d161fa-9578-46c9-b6a6-ee2d0a531b0c' and isSaved = 1
+  let result = await this.execQuery( `select RecipeApiId from [UserRecipe] where UserId = '${userId}' and isSaved = 1`);
+  console.log(result);
+  return result;
+}
 
 exports.getUserInfoOnRecipes = getUserInfoOnRecipes;
 
