@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 
 router.post("/Register", async (req, res, next) => {
   try {
-    const users = await DButils.execQuery("SELECT UserName FROM [User]");
+    const users = await DButils.execQuery("SELECT UserName FROM [Login]");
 
     if (users.find((x) => x.username === req.body.username))
       throw { status: 409, message: "Username taken" };
@@ -17,15 +17,19 @@ router.post("/Register", async (req, res, next) => {
       req.body.password,
       parseInt(process.env.bcrypt_saltRounds)
     );
-    // User table
-    await DButils.execQuery(
-      `INSERT INTO [User] VALUES ('${req.body.username}', '${req.body.firstname}' ,'${req.body.lastname}',  '${req.body.country}', 
-      '${req.body.email}', '${req.body.image}')`
-    );
+
     //Login table
     await DButils.execQuery(
-      `INSERT INTO [Login] VALUES ('${req.body.username}', '${hash_password}')`
+      `INSERT INTO [Login](UserName, Password) VALUES ('${req.body.username}', '${hash_password}')`
     );
+    
+    let userId = await DButils.getUserIdByName(req.body.username);
+    // User table
+    await DButils.execQuery(
+      `INSERT INTO [User] VALUES ( CONVERT(uniqueidentifier, '${userId[0].UserId}'), '${req.body.firstname}' ,'${req.body.lastname}',  '${req.body.country}', 
+      '${req.body.email}', '${req.body.image}')`
+    );
+
     console.log(users);
     res.status(201).send({ message: "user created", success: true });
   } catch (error) {
@@ -36,7 +40,7 @@ router.post("/Register", async (req, res, next) => {
 router.post("/Login", async (req, res, next) => {
   try {
     // check that username exists
-    const users = await DButils.execQuery("SELECT UserName FROM [User]");
+    const users = await DButils.execQuery("SELECT UserName FROM [Login]");
     if (!users.find(x => x.UserName === req.body.username))
       throw { status: 401, message: "Username or Password incorrect" };
 

@@ -33,9 +33,44 @@ exports.execQuery = async function (query) {
 };
 
 //---------------------- DB queries ---------------------------------
-exports.checkUserNameOnDb = async function (username){
-  return await this.execQuery( `SELECT * FROM [Login] WHERE UserName = '${username}'`);
+exports.getUserIdByName = async function (username){
+  return await this.execQuery( `SELECT UserId FROM [Login] WHERE UserName = '${username}'`);
 }
+
+// exports.getUserId = async function getUserId(username){
+//   return await this.execQuery( `SELECT UserId FROM [Login] WHERE UserName = '${username}'`);
+// }
+
+// SELECT * FROM UserRecipe WHERE UserName = '${username}'  and RecipeId =
+async function getUserInfoOnRecipes(username, ids){
+  let info = [];
+  
+  for(let id of ids) {
+    let recipeUserTable = "";
+    if(id.includes("-")){
+      recipeUserTable = "UserRecipe";
+    }
+    else{
+      recipeUserTable = "UserRecipeApi";
+    }
+
+    let query = `SELECT * FROM ` + recipeUserTable + ` WHERE UserName = '${username}'  and RecipeId = '${id}'`;
+    let queryResult = this.execQuery(query);
+
+    if(!queryResult){
+      info.push({id: [false, false]});
+    }
+    else{
+      info.push({id: [true, queryResult[2]]});
+    }
+  }
+
+  return info;
+}
+
+
+exports.getUserInfoOnRecipes = getUserInfoOnRecipes;
+
 // process.on("SIGINT", function () {
 //   if (pool) {
 //     pool.close(() => console.log("connection pool closed"));

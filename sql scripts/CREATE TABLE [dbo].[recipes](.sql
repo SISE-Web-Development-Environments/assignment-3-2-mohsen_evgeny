@@ -2,9 +2,9 @@
 CREATE TABLE [dbo].[Recipe](
 	[RecipeId] [UNIQUEIDENTIFIER] NOT NULL default NEWID(),
 	[RecipeName] [varchar](50) NOT NULL,
-	[Author] [varchar](50) NOT NULL,
+	[AuthorUserId] [UNIQUEIDENTIFIER] NOT NULL,
 	PRIMARY KEY (RecipeId),
-	FOREIGN KEY (Author) REFERENCES [User](UserName)
+	FOREIGN KEY (AuthorUserId) REFERENCES [Login](UserId)
 )
 
 -- General info about recipe
@@ -43,22 +43,68 @@ CREATE TABLE [dbo].[InstructionsRecipe](
 
 -- interaction of a user with a recipe: if user saw it or/and added it to favorites
 CREATE TABLE [dbo].[UserRecipe](
-	[UserName] [varchar](50) NOT NULL,
-	[RecipeId] [UNIQUEIDENTIFIER] NOT NULL,
+	[UserId] [UNIQUEIDENTIFIER] NOT NULL,
+	[RecipeApiId] [INT] NOT NULL,
 	[isWatched] [BIT] NOT NULL DEFAULT 1,
 	[isSaved] [BIT] NOT NULL DEFAULT 0,
-	PRIMARY KEY (UserName, RecipeId),
-	FOREIGN KEY (UserName) REFERENCES [User](UserName),
-	FOREIGN KEY (RecipeId) REFERENCES Recipe(RecipeId),
+	PRIMARY KEY (UserId, RecipeApiId),
+	FOREIGN KEY (UserId) REFERENCES [Login](UserId),
 )
 
 CREATE TABLE [dbo].[FamilyRecipe](
-	[UserName] [varchar](50) NOT NULL,
+	[UserId] [UNIQUEIDENTIFIER] NOT NULL,
 	[RecipeId] [UNIQUEIDENTIFIER] NOT NULL,
 	[Origin] [varchar](50) NOT NULL, -- whose the recipe in family
 	[Reason] [varchar](50) NOT NULL, -- cause to coook the dish
 	[ImageUrl] [varchar](MAX) NOT NULL, -- family pictures with the dish
-	PRIMARY KEY (UserName, RecipeId),
-	FOREIGN KEY (UserName) REFERENCES [User](UserName),
+	PRIMARY KEY (UserId, RecipeId),
+	FOREIGN KEY (UserId) REFERENCES [Login](UserId),
 	FOREIGN KEY (RecipeId) REFERENCES Recipe(RecipeId),
 )
+
+/*
+-- List of Cuisines for search
+CREATE TABLE [dbo].[Cuisine](
+	[CuisineName] [varchar](50) NOT NULL,
+	PRIMARY KEY (Cuisine)
+)
+
+-- Recipe by Cuisines for search
+CREATE TABLE [dbo].[CuisineRecipe](
+	[RecipeId] [UNIQUEIDENTIFIER] NOT NULL,
+	[CuisineName] [varchar](50) NOT NULL,
+	PRIMARY KEY (RecipeId, Cuisine),
+	FOREIGN KEY (RecipeId) REFERENCES [Recipe](RecipeId)
+	FOREIGN KEY (CuisineName) REFERENCES [Cuisine](CuisineName)
+)
+
+-- List of Diets for search
+CREATE TABLE [dbo].[Diet](
+	[DietName] [varchar](50) NOT NULL,
+	PRIMARY KEY (DietName)
+)
+
+-- Recipe by Diet
+CREATE TABLE [dbo].[DietRecipe](
+	[RecipeId] [UNIQUEIDENTIFIER] NOT NULL,
+	[DietName] [varchar](50) NOT NULL,
+	PRIMARY KEY (RecipeId, DietName),
+	FOREIGN KEY (RecipeId) REFERENCES [Recipe](RecipeId)
+	FOREIGN KEY (DietName) REFERENCES [Diet](DietName)
+)
+
+-- List of Diets for search
+CREATE TABLE [dbo].[Intolerance](
+	[IntoleranceName] [varchar](50) NOT NULL,
+	PRIMARY KEY (IntoleranceName)
+)
+
+-- Recipe by Diet
+CREATE TABLE [dbo].[intoleranceRecipe](
+	[RecipeId] [UNIQUEIDENTIFIER] NOT NULL,
+	[IntoleranceName] [varchar](50) NOT NULL,
+	PRIMARY KEY (RecipeId, IntoleranceName),
+	FOREIGN KEY (RecipeId) REFERENCES [Recipe](RecipeId)
+	FOREIGN KEY (IntoleranceName) REFERENCES [Intolerance](IntoleranceName)
+)
+*/
