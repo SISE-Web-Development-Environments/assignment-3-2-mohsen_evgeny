@@ -37,39 +37,31 @@ exports.getUserIdByName = async function (username){
   return await this.execQuery( `SELECT UserId FROM [Login] WHERE UserName = '${username}'`);
 }
 
+// exports.getUserIdByName = async function (username){
+//   return await this.execQuery( `SELECT UserId FROM [Login] WHERE UserName = '${username}'`);
+// }
+
 // exports.getUserId = async function getUserId(username){
 //   return await this.execQuery( `SELECT UserId FROM [Login] WHERE UserName = '${username}'`);
 // }
 
 // SELECT * FROM UserRecipe WHERE UserName = '${username}'  and RecipeId =
-async function getUserInfoOnRecipes(username, ids){
+exports.getUserInfoOnRecipes = async function(user, ids){
   let info = [];
   
   for(let id of ids) {
-    let recipeUserTable = "";
-    if(id.includes("-")){
-      recipeUserTable = "UserRecipe";
-    }
-    else{
-      recipeUserTable = "UserRecipeApi";
-    }
+    let query = `SELECT * FROM UserRecipe WHERE UserId = CONVERT(uniqueidentifier, '${user[0].UserId}') and RecipeApiId = '${id}'`;
+    let queryResult = await this.execQuery(query);
 
-    let query = `SELECT * FROM ` + recipeUserTable + ` WHERE UserName = '${username}'  and RecipeId = '${id}'`;
-    let queryResult = this.execQuery(query);
-
-    if(!queryResult){
-      info.push({id: [false, false]});
-    }
-    else{
-      info.push({id: [true, queryResult[2]]});
-    }
+    //{key:"key", value:"value"}
+    info.push({[id]: {watched: queryResult[0].isWatched, saved: queryResult[0].isSaved}});
   }
 
   return info;
 }
 
 
-exports.getUserInfoOnRecipes = getUserInfoOnRecipes;
+//exports.getUserInfoOnRecipes = getUserInfoOnRecipes;
 
 // process.on("SIGINT", function () {
 //   if (pool) {
