@@ -47,4 +47,5 @@ CREATE TABLE [dbo].[Login](
 -- f6d161fa-9578-46c9-b6a6-ee2d0a531b0c
 -- select * from GeneralRecipe
 -- select * from [dbo].[UserRecipe] 
-select RecipeApiId from [dbo].[UserRecipe] where UserId = 'f6d161fa-9578-46c9-b6a6-ee2d0a531b0c' and isSaved = 1
+-- select RecipeApiId from [dbo].[UserRecipe] where UserId = 'f6d161fa-9578-46c9-b6a6-ee2d0a531b0c' and isSaved = 1
+select * from [GeneralRecipe]

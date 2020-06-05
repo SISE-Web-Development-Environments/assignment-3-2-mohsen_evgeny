@@ -37,4 +37,13 @@ router.get('/:userid/favorites', async (req, res) => {
     res.send(userFavoriteRecipes);
 });
 
+router.get('/:userid/myrecipes', (req, res) => {
+  const userId = req.params.userid;
+  //console.log(userId);
+  const userFavoriteRecipesIds = await DButils.getUserPersonalRecipes(userId);
+  const userFavoriteRecipes = await search_recipes.getRecipesInfo(userFavoriteRecipesIds);
+  //console.log(userFavoriteRecipes);
+  res.send(userFavoriteRecipes);
+});
+
 module.exports = router;
