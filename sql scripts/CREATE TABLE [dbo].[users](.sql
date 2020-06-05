@@ -1,3 +1,27 @@
+-- UserName-Password list for Login auth
+CREATE TABLE [dbo].[Login](
+	[UserId] [UNIQUEIDENTIFIER] NOT NULL default NEWID(),
+	[UserName] [varchar](50) NOT NULL UNIQUE,
+	[Password] [varchar](MAX) NOT NULL,
+	PRIMARY KEY ([UserId]),
+)
+
+-- Info about user, get from registration form
+CREATE TABLE [dbo].[User](
+	[UserId] [UNIQUEIDENTIFIER] NOT NULL,
+	[FirstName] [varchar](50) NOT NULL,
+	[LastName] [varchar](50) NOT NULL,
+	[Country] [varchar](50) NOT NULL,
+	[Email] [varchar](50) NOT NULL,
+	[ImageUrl] [varchar](MAX),
+--	[WatchedRecipeIds] [varchar](MAX),
+	PRIMARY KEY ([UserId]),
+	FOREIGN KEY ([UserId]) REFERENCES [Login]([UserId])
+)
+
+
+
+/*
 -- Info about user, get from registration form
 CREATE TABLE [dbo].[User](
 --	[UserId] [UNIQUEIDENTIFIER] NOT NULL default NEWID(),
@@ -18,3 +42,4 @@ CREATE TABLE [dbo].[Login](
 	PRIMARY KEY (UserName),
 	FOREIGN KEY (UserName) REFERENCES [User](UserName)
 )
+*/

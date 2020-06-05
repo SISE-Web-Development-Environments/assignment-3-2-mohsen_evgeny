@@ -17,16 +17,13 @@ router.use((req, res, next) =>{
 
 //--------------------- EndPoints ----------------------
 
-router.get("/alive", (req, res) => {
-  res.send("I'm alive")
-});
-
 router.get("/recipeInfo/:ids", (req, res) => {
   //using JSON parse to get array of integers instead of array of strings
   const ids = JSON.parse(req.params.ids);
+ // const ids = req.params.ids.replace("[", "").replace("]", "").replace(" ", "").split(",");
   const user_name = req.user;
   console.log(ids, user_name);
-  const userRecipesData = getUserInfoOnRecipes(user_name, ids); //TODO: build function - go to DB and get foreach id if the user (watched, saved) 
+  const userRecipesData = DButils.getUserInfoOnRecipes(user_name, ids); // TODO: build function - go to DB and get foreach id if the user (watched, saved) 
   res.send(userRecipesData);
 });
 
