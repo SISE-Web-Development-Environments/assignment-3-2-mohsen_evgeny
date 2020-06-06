@@ -3,15 +3,8 @@ CREATE TABLE [dbo].[Recipe](
 	[RecipeId] [UNIQUEIDENTIFIER] NOT NULL default NEWID(),
 	[RecipeName] [varchar](50) NOT NULL,
 	[AuthorUserId] [UNIQUEIDENTIFIER] NOT NULL,
-	PRIMARY KEY (RecipeId),
-	FOREIGN KEY (AuthorUserId) REFERENCES [Login](UserId)
-)
-
--- General info about recipe
-CREATE TABLE [dbo].[GeneralRecipe](
-	[RecipeId] [UNIQUEIDENTIFIER] NOT NULL,
 	[Duration] [INT] NOT NULL,
-	[Diners] [INT] NOT NULL DEFAULT 0, -- how big the exit product
+	[Servings] [INT] NOT NULL DEFAULT 0, -- how big the exit product
 	[Likes] [INT] NOT NULL DEFAULT 0,
 	[isVegetarian] [BIT] NOT NULL DEFAULT 0,
 	[isVegan] [BIT] NOT NULL DEFAULT 0,
@@ -19,8 +12,9 @@ CREATE TABLE [dbo].[GeneralRecipe](
 	[ImageUrl] [varchar](MAX),
 	[isClickableImage] [BIT] NOT NULL DEFAULT 0,
 	PRIMARY KEY (RecipeId),
-	FOREIGN KEY (RecipeId) REFERENCES [Recipe](RecipeId)
+	FOREIGN KEY (AuthorUserId) REFERENCES [Login](UserId)
 )
+
 
 -- Ingredients and its amount for a recipe
 CREATE TABLE [dbo].[IngredientsRecipe](

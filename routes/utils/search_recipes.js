@@ -98,3 +98,4 @@ function extractSearchResultsIds(search_response){
 
 exports.searchRecipes = searchRecipes;
 exports.extractQueriesParams = extractQueriesParams;
+exports.getRecipesInfo = getRecipesInfo;
