@@ -4,7 +4,7 @@ var router = express.Router();
 
 const search_recipe_util = require("./utils/search_recipes");
 
-
+// --------------------------- EndPoints ------------------------------
 router.use((req,res,next) =>{
   console.log("Recipes route!");
   next();
@@ -30,6 +30,13 @@ router.get("/search/query/:searchQuery/amount/:num",
         console.log(error);
         res.sendStatus(500);
       });
+});
+
+
+router.get("/random", 
+async (req, res) =>{
+    let randomRecipes = await search_recipe_util.getRandomRecipes();
+    res.send(randomRecipes);
 });
 
 // router.get("/Information", async (req, res, next) => {

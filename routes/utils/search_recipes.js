@@ -96,6 +96,44 @@ function extractSearchResultsIds(search_response){
     return recipes_id_list;
 }
 
+// -------------------- Random --------------------------
+function extractSearchRandomResultsIds(search_response){
+    recipes_id_list = [];
+    let recipes = search_response.data.recipes;
+
+    recipes.map((recipe) => {
+        console.log(recipe.title);
+        recipes_id_list.push(recipe.id);
+    });
+
+    return recipes_id_list;
+}
+
+
+//no parameters 
+async function getRandomRecipes(){
+    let search_response = await axios.get(
+        `${recipes_api_url}/random?${api_key}`,
+        {
+            params:{
+                number: 3,
+            }
+        }
+    );
+    //search response
+    const recipes_id_list = extractSearchRandomResultsIds(search_response);
+    //console.log(recipes_id_list);
+
+    let info_array = await getRecipesInfo(recipes_id_list);
+
+    //console.log("info_array: ", info_array);
+
+    return info_array;
+}
+
+
+// ----------------------- Exports --------------------------------
+exports.getRandomRecipes = getRandomRecipes;
 exports.searchRecipes = searchRecipes;
 exports.extractQueriesParams = extractQueriesParams;
 exports.getRecipesInfo = getRecipesInfo;
