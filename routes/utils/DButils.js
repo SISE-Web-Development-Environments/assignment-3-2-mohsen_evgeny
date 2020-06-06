@@ -75,15 +75,15 @@ exports.getUserFavoriteRecipes = async function (userId){ // TODO : change
 
 exports.getUserPersonalRecipes = async function (userId){ // TODO : change
   //select RecipeApiId from [dbo].[UserRecipe] where UserId = 'f6d161fa-9578-46c9-b6a6-ee2d0a531b0c' and isSaved = 1
-  let result = await this.execQuery( `select RecipeApiId from [GeneralRecipe] where UserId = '${userId}'`);
-  let info = [];
-  //console.log(result);
-  for(let id of result) {
-    //{key:"key", value:"value"}
-    info.push(id.RecipeApiId);
-  }
+  let result = await this.execQuery( `select * from [Recipe] where AuthorUserId = '${userId}'`);
+  // let info = [];
+  // //console.log(result);
+  // for(let id of result) {
+  //   //{key:"key", value:"value"}
+  //   info.push(id.RecipeId);
+  // }
   //console.log(info);
-  return info;
+  return result;
 }
 
 //exports.getUserInfoOnRecipes = getUserInfoOnRecipes;

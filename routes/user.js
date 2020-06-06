@@ -37,13 +37,13 @@ router.get('/:userid/favorites', async (req, res) => {
     res.send(userFavoriteRecipes);
 });
 
-router.get('/:userid/myrecipes', (req, res) => {
+router.get('/:userid/myrecipes', async (req, res) => {
   const userId = req.params.userid;
   //console.log(userId);
-  const userFavoriteRecipesIds = await DButils.getUserPersonalRecipes(userId);
-  const userFavoriteRecipes = await search_recipes.getRecipesInfo(userFavoriteRecipesIds);
+  const userPersonalRecipesIds = await DButils.getUserPersonalRecipes(userId);
+  //const userPersonalRecipes = await search_recipes.getRecipesInfo(userPersonalRecipesIds);
   //console.log(userFavoriteRecipes);
-  res.send(userFavoriteRecipes);
+  res.send(userPersonalRecipesIds);
 });
 
 module.exports = router;
