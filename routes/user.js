@@ -87,8 +87,14 @@ router.get("/watched", async (req, res) => {
   const user = req.user;
   const recipeIds = await DButils.getThreeLastWatchedIds(user);
 
-  let watchedWithDetails = await search_recipe_util.getRecipesInfo(recipeIds);
-  res.send(watchedWithDetails);
+  let watchedWithGeneralDetails = await search_recipes.getRecipesInfo(recipeIds);
+  res.send(watchedWithGeneralDetails);
+});
+
+router.get("/family", async (req, res) => {
+  const user = req.user;
+  const familyRecipes = await DButils.getFamilyRecipes(user);
+  res.send(familyRecipes);
 });
 
 module.exports = router;

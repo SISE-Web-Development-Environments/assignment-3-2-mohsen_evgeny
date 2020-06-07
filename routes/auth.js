@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 
 //--------------------- EndPoints ----------------------
 
-router.post("/Register", async (req, res, next) => {
+router.post("/register", async (req, res, next) => {
   try {
     const users = await DButils.execQuery("SELECT UserName FROM [Login]");
 
@@ -37,7 +37,7 @@ router.post("/Register", async (req, res, next) => {
   }
 });
 
-router.post("/Login", async (req, res, next) => {
+router.post("/login", async (req, res, next) => {
   try {
     // check that username exists
     const users = await DButils.execQuery("SELECT UserName FROM [Login]");

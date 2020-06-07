@@ -84,38 +84,14 @@ exports.getUserPersonalRecipes = async function (userId){ // TODO : change
   return result;
 }
 
-//exports.getUserInfoOnRecipes = getUserInfoOnRecipes;
+// -------------------------------- Family  -----------------------------------
+exports.getFamilyRecipes = async function (user){
+  return await this.execQuery(`SELECT * FROM [FamilyRecipe] WHERE UserId = (CONVERT(uniqueidentifier, '${user[0].UserId}'))`);
+}
 
-// process.on("SIGINT", function () {
-//   if (pool) {
-//     pool.close(() => console.log("connection pool closed"));
-//   }
-// });
 
-// poolConnect.then(() => {
-//   console.log("pool closed");
 
-//   return sql.close();
-// });
-
-// exports.execQuery = function (query) {
-//   return new Promise((resolve, reject) => {
-//     sql
-//       .connect(config)
-//       .then((pool) => {
-//         return pool.request().query(query);
-//       })
-//       .then((result) => {
-//         // console.log(result);
-//         sql.close();
-//         resolve(result.recordsets[0]);
-//       })
-//       .catch((err) => {
-//         // ... error checks
-//       });
-//   });
-// };
-
+// -------------------------------- set and update user recipe info -----------------------------------
 exports.setUserInfoOnRecipes = async function(user, id, isSaved){
   await this.execQuery(`INSERT INTO UserRecipe VALUES(CONVERT(uniqueidentifier, '${user[0].UserId}'), '${id}', '1', '${isSaved}', GETDATE())`);
 }
@@ -124,6 +100,7 @@ exports.updateUserInfoOnRecipes = async function(user, id, isSaved){
   await this.execQuery(`UPDATE UserRecipe SET isSaved = '${isSaved}', WatchDate = GETDATE() WHERE UserId = CONVERT(uniqueidentifier, '${user[0].UserId}') and RecipeApiId = '${id}'`);
 }
 
+// --------------------------------  3 watched -----------------------------------
 exports.getThreeLastWatchedIds = async function(user){
   let ids = [];
   let rawIds = await this.execQuery(`SELECT top 3 RecipeApiId from UserRecipe where UserId = CONVERT(uniqueidentifier, 'F6D161FA-9578-46C9-B6A6-EE2D0A531B0C') ORDER BY WatchDate DESC`);
