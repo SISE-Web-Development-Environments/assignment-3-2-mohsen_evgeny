@@ -96,6 +96,83 @@ function extractSearchResultsIds(search_response){
     return recipes_id_list;
 }
 
+//--------------------------------- show Recipe ----------------------------
+
+function extractFullRelevantRecipeData(recipes_Info){
+    let  {
+        id,
+        title,
+        readyInMinutes,
+        aggregateLikes,
+        vegetarian,
+        vegan,
+        glutenFree,
+        image,
+        analyzedInstructions,
+        serving,
+        extendedIngredients,
+    } = recipes_Info.data;
+
+    return{
+        id: id,
+        title: title,
+        readyInMinutes: readyInMinutes,
+        aggregateLikes: aggregateLikes,
+        vegetarian: vegetarian,
+        vegan: vegan,
+        glutenFree: glutenFree,
+        image: image,
+        analyzedInstructions: analyzedInstructions,
+        serving: serving,
+        extendedIngredients: extendedIngredients,
+    }
+    
+}
+
+async function getRecipe(recipeId){
+    let fullResponse = await axios.get(`${recipes_api_url}/${recipeId}/information?${api_key}`);
+    const response = extractFullRelevantRecipeData(fullResponse);
+        return response;
+}
+
+
+// -------------------- Random --------------------------
+//return 3 of the 5 random results that all have instructions
+function extractThreeRandomResults(search_response){
+    recipes_id_list = [];
+    let recipes = search_response.data.recipes;
+    recipes.map((recipe) => {
+        if(recipe.analyzedInstructions.length == 0){
+            console.log(recipe.title);
+        }else{
+            recipes_id_list.push(recipe.id);
+        }
+    });
+
+    return recipes_id_list.slice(0, 3);
+}
+
+
+//no parameters 
+async function getRandomRecipes(){
+    let search_response = await axios.get(
+        `${recipes_api_url}/random?${api_key}`,
+        {
+            params:{
+                number: 5, // to avoid an empty instruction recipes
+            }
+        }
+    );
+    const recipes_id_list = extractThreeRandomResults(search_response); // down to three
+
+    let info_array = await getRecipesInfo(recipes_id_list);
+    return info_array;
+}
+
+
+// ----------------------- Exports --------------------------------
+exports.getRandomRecipes = getRandomRecipes;
 exports.searchRecipes = searchRecipes;
 exports.extractQueriesParams = extractQueriesParams;
 exports.getRecipesInfo = getRecipesInfo;
+exports.getRecipe = getRecipe;

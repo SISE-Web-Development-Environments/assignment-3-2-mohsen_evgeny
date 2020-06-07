@@ -45,6 +45,7 @@ exports.getUserIdByName = async function (username){
 //   return await this.execQuery( `SELECT UserId FROM [Login] WHERE UserName = '${username}'`);
 // }
 
+// SELECT * FROM UserRecipe WHERE UserName = '${username}'  and RecipeId =
 
 exports.getUserInfoOnRecipes = async function(user, ids){
   let info = [];
@@ -59,6 +60,61 @@ exports.getUserInfoOnRecipes = async function(user, ids){
 
   return info;
 }
+// -------------------------------- Favorite -----------------------------------
+exports.getUserFavoriteRecipes = async function (userId){ // TODO : change
+  //select RecipeApiId from [dbo].[UserRecipe] where UserId = 'f6d161fa-9578-46c9-b6a6-ee2d0a531b0c' and isSaved = 1
+  let result = await this.execQuery( `select RecipeApiId from [UserRecipe] where UserId = '${userId}' and isSaved = 1`);
+  let info = [];
+  //console.log(result);
+  for(let id of result) {
+    //{key:"key", value:"value"}
+    info.push(id.RecipeApiId);
+  }
+  //console.log(info);
+  return info;
+}
+// -------------------------------- Personal  -----------------------------------
+exports.getUserPersonalRecipes = async function (userId){ // TODO : change
+  let result = await this.execQuery( `select * from [Recipe] where AuthorUserId = '${userId}'`);
+  //console.log(result);
+  for(let keyValue of result) {
+    delete keyValue.AuthorUserId;
+  }
+  //console.log(info);
+  return result;
+}
+
+//exports.getUserInfoOnRecipes = getUserInfoOnRecipes;
+
+// process.on("SIGINT", function () {
+//   if (pool) {
+//     pool.close(() => console.log("connection pool closed"));
+//   }
+// });
+
+// poolConnect.then(() => {
+//   console.log("pool closed");
+
+//   return sql.close();
+// });
+
+// exports.execQuery = function (query) {
+//   return new Promise((resolve, reject) => {
+//     sql
+//       .connect(config)
+//       .then((pool) => {
+//         return pool.request().query(query);
+//       })
+//       .then((result) => {
+//         // console.log(result);
+//         sql.close();
+//         resolve(result.recordsets[0]);
+//       })
+//       .catch((err) => {
+//         // ... error checks
+//       });
+//   });
+// };
 
 exports.setUserInfoOnRecipes = async function(user, id, isSaved){
   await this.execQuery(`INSERT INTO UserRecipe VALUES(CONVERT(uniqueidentifier, '${user[0].UserId}'), '${id}', '1', '${isSaved}', GETDATE())`);

@@ -43,3 +43,11 @@ CREATE TABLE [dbo].[Login](
 	FOREIGN KEY (UserName) REFERENCES [User](UserName)
 )
 */
+
+-- f6d161fa-9578-46c9-b6a6-ee2d0a531b0c
+-- select * from GeneralRecipe
+-- select * from [dbo].[UserRecipe] 
+-- select RecipeApiId from [dbo].[UserRecipe] where UserId = 'f6d161fa-9578-46c9-b6a6-ee2d0a531b0c' and isSaved = 1
+-- select * from [Recipe]
+select RecipeId from [Recipe] where AuthorUserId = 'f6d161fa-9578-46c9-b6a6-ee2d0a531b0c'
+
