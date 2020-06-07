@@ -46,6 +46,7 @@ exports.getUserIdByName = async function (username){
 // }
 
 // SELECT * FROM UserRecipe WHERE UserName = '${username}'  and RecipeId =
+
 exports.getUserInfoOnRecipes = async function(user, ids){
   let info = [];
   
@@ -114,3 +115,23 @@ exports.getUserPersonalRecipes = async function (userId){ // TODO : change
 //       });
 //   });
 // };
+
+exports.setUserInfoOnRecipes = async function(user, id, isSaved){
+  await this.execQuery(`INSERT INTO UserRecipe VALUES(CONVERT(uniqueidentifier, '${user[0].UserId}'), '${id}', '1', '${isSaved}', GETDATE())`);
+}
+
+exports.updateUserInfoOnRecipes = async function(user, id, isSaved){
+  await this.execQuery(`UPDATE UserRecipe SET isSaved = '${isSaved}', WatchDate = GETDATE() WHERE UserId = CONVERT(uniqueidentifier, '${user[0].UserId}') and RecipeApiId = '${id}'`);
+}
+
+exports.getThreeLastWatchedIds = async function(user){
+  let ids = [];
+  let rawIds = await this.execQuery(`SELECT top 3 RecipeApiId from UserRecipe where UserId = CONVERT(uniqueidentifier, 'F6D161FA-9578-46C9-B6A6-EE2D0A531B0C') ORDER BY WatchDate DESC`);
+
+  rawIds.map((rawId) =>{
+    ids.push(rawId.RecipeApiId);
+  });
+
+  return ids;
+}
+
