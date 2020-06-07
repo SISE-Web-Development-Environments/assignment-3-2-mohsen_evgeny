@@ -58,7 +58,7 @@ router.post("/recipeInfo/:ids", async (req, res, next) => {
     const user = req.user;
     const isSaved = req.body.isSaved;
 
-    console.log(id, user_id, isSaved);
+    console.log(id, user, isSaved);
     await DButils.setUserInfoOnRecipes(user, id, isSaved);
     res.status(201).send({ message: "recipe info for user is inserted", success: true });
   } 
@@ -68,13 +68,13 @@ router.post("/recipeInfo/:ids", async (req, res, next) => {
 });
 
 // req.body: {"isSaved": "0/1"}
-router.put("/recipeInfo/:ids", async (req, res) => {
+router.put("/recipeInfo/:ids", async (req, res, next) => {
   try {
     const id = req.params.ids;
     const user = req.user;
     const isSaved = req.body.isSaved;
 
-    console.log(id, user_id, isSaved);
+    console.log(id, user, isSaved);
     await DButils.updateUserInfoOnRecipes(user, id, isSaved);
     res.status(201).send({ message: "recipe info for user is updated", success: true });
   } 
@@ -87,7 +87,7 @@ router.get("/watched", async (req, res) => {
   const user = req.user;
   const recipeIds = await DButils.getThreeLastWatchedIds(user);
 
-  let watchedWithDetails = await search_recipe_util.getRecipesInfo(recipeIds);
+  let watchedWithDetails = await search_recipes.getRecipesInfo(recipeIds);
   res.send(watchedWithDetails);
 });
 
