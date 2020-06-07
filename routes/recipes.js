@@ -1,4 +1,3 @@
-//TODO: compelete !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 var express = require("express");
 var router = express.Router();
 
@@ -34,19 +33,25 @@ router.get("/search/query/:searchQuery/amount/:num",
 
 
 router.get("/random", 
-async (req, res) =>{
+async (req, res, next) =>{
+  try{
     let randomRecipes = await search_recipe_util.getRandomRecipes();
     res.send(randomRecipes);
+  }catch(error){
+    next(error);
+  }
+    
 });
 
+//recipe Page
 router.get("/show/:recipeID", 
-async (req, res, err) =>{
-  // try{
+async (req, res, next) =>{
+  try{
     let showRecipes = await search_recipe_util.getRecipe(req.params.recipeID);
     res.send(showRecipes);
-  // }catch(err){
-
-  // }
+  }catch(error){
+    next(error);
+  }
     
 });
 

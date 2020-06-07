@@ -131,7 +131,7 @@ function extractFullRelevantRecipeData(recipes_Info){
 
 async function getRecipe(recipeId){
     let fullResponse = await axios.get(`${recipes_api_url}/${recipeId}/information?${api_key}`);
-    const response = extractFullRelevantRecipeData(fullResponse);
+    const response = extractFullRelevantRecipeData(fullResponse); //show relavent data 
         return response;
 }
 
