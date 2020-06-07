@@ -44,10 +44,10 @@ router.get('/:userid/myrecipes', async (req, res) => {
   //const userPersonalRecipes = await search_recipes.getRecipesInfo(userPersonalRecipesIds);
   //console.log(userFavoriteRecipes);
   res.send(userPersonalRecipesIds);
-  const user = req.user;
-  console.log(ids, user_id);
-  const userRecipesData = await DButils.getUserInfoOnRecipes(user, ids);  
-  res.send(userRecipesData);
+  // const user = req.user;
+  // console.log(ids, user_id);
+  // const userRecipesData = await DButils.getUserInfoOnRecipes(user, ids);  
+  // res.send(userRecipesData);
 });
 
 
