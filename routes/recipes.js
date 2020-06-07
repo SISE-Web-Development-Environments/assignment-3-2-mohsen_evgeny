@@ -1,9 +1,9 @@
 //TODO: compelete !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 var express = require("express");
 var router = express.Router();
-// const axios = require("axios");
-// const api_domain = "https://api.spoonacular.com/recipes";
-const search_util = require("./utils/search_recipes");
+
+const search_recipe_util = require("./utils/search_recipes");
+
 
 router.use((req,res,next) =>{
   console.log("Recipes route!");
@@ -20,7 +20,16 @@ router.get("/search/query/:searchQuery/amount/:num",
 
     //checks if params is valid
     console.log(req.query);
-    
+
+    search_recipe_util.extractQueriesParams(req.query, search_params);
+
+    search_recipe_util
+      .searchRecipes(search_params)
+      .then((info_array) => res.send(info_array))
+      .catch((error) => { 
+        console.log(error);
+        res.sendStatus(500);
+      });
 });
 
 // router.get("/Information", async (req, res, next) => {
