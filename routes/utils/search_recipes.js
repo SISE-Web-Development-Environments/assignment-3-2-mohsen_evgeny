@@ -108,8 +108,8 @@ function extractFullRelevantRecipeData(recipes_Info){
         vegan,
         glutenFree,
         image,
+        servings,
         analyzedInstructions,
-        serving,
         extendedIngredients,
     } = recipes_Info.data;
 
@@ -122,8 +122,8 @@ function extractFullRelevantRecipeData(recipes_Info){
         vegan: vegan,
         glutenFree: glutenFree,
         image: image,
+        servings: servings,
         analyzedInstructions: analyzedInstructions,
-        serving: serving,
         extendedIngredients: extendedIngredients,
     }
     
