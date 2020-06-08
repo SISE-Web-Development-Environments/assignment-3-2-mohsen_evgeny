@@ -18,7 +18,7 @@ router.get("/search/query/:searchQuery/amount/:num",
     search_params.instructionRequired = true;
 
     //checks if params is valid
-    console.log(req.query);
+    // console.log(req.query);
 
     search_recipe_util.extractQueriesParams(req.query, search_params);
 
@@ -26,7 +26,7 @@ router.get("/search/query/:searchQuery/amount/:num",
       .searchRecipes(search_params)
       .then((info_array) => res.send(info_array))
       .catch((error) => { 
-        console.log(error);
+        // console.log(error);
         res.sendStatus(500);
       });
 });

@@ -23,7 +23,7 @@ router.get("/recipeInfo/:ids",
       //using JSON parse to get array of integers instead of array of strings
     const ids = JSON.parse(req.params.ids);
     const user_id = req.user;
-    console.log(ids, user_id);
+    // console.log(ids, user_id);
     const userRecipesData = await DButils.getUserInfoOnRecipes(user_id, ids); 
     res.send(userRecipesData);
   }catch(error){
@@ -65,7 +65,7 @@ router.post("/recipeInfo/add/:id",
     const user = req.user;
     const isSaved = req.body.isSaved;
 
-    console.log(id, user, isSaved);
+    // console.log(id, user, isSaved);
     await DButils.setUserInfoOnRecipes(user, id, isSaved);
     res.status(201).send({ message: "recipe info for user is inserted", success: true });
   } 
@@ -82,7 +82,7 @@ router.put("/recipeInfo/update/:id",
     const user = req.user;
     const isSaved = req.body.isSaved;
 
-    console.log(id, user, isSaved);
+    // console.log(id, user, isSaved);
     await DButils.updateUserInfoOnRecipes(user, id, isSaved);
     res.status(201).send({ message: "recipe info for user is updated", success: true });
   } 

@@ -30,7 +30,7 @@ router.post("/register", async (req, res, next) => {
       '${req.body.email}', '${req.body.image}')`
     );
 
-    console.log(users);
+    // console.log(users);
     res.status(201).send({ message: "user created", success: true });
   } catch (error) {
     next(error);

@@ -74,7 +74,9 @@ exports.getUserFavoriteRecipes = async function (userId){
 }
 // -------------------------------- Personal  -----------------------------------
 exports.getUserPersonalRecipes = async function (userId){ 
-  let result = await this.execQuery( `select * from [Recipe] where AuthorUserId = '${userId}'`);
+  let result = await this.execQuery( ` SELECT [Recipe].* FROM [Recipe] 
+  FULL JOIN [FamilyRecipe] ON [Recipe].RecipeId = [FamilyRecipe].RecipeId
+  WHERE [Recipe].AuthorUserId = '${userId}' and [FamilyRecipe].UserId is NULL`);
   //console.log(result);
   for(let keyValue of result) {
     delete keyValue.AuthorUserId;
@@ -88,6 +90,15 @@ exports.getFamilyRecipes = async function (user){
   return await this.execQuery(`SELECT * FROM [FamilyRecipe] WHERE UserId = (CONVERT(uniqueidentifier, '${user[0].UserId}'))`);
 }
 
+//--------------------------------- get Instructions & Ingrediants ------------------------------------
+
+exports.getIngredientsDb = async function (recipeId){
+  return await this.execQuery(`select * from IngredientsRecipe where RecipeId ='${recipeId}'`);
+}
+
+exports.getInstructionsDb = async function (recipeId){
+  return await this.execQuery(`select * from InstructionsRecipe where RecipeId ='${recipeId}'`);
+}
 
 
 // -------------------------------- set and update user recipe info -----------------------------------

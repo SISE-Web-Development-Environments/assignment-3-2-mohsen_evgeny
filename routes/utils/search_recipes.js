@@ -15,7 +15,7 @@ function extractQueriesParams(query_params, search_params){
         }
     });
 
-    console.log(search_params);
+    // console.log(search_params);
 }
 
 //first step of searching
@@ -28,11 +28,11 @@ async function searchRecipes(search_params){
     );
     //search response
     const recipes_id_list = extractSearchResultsIds(search_response);
-    console.log(recipes_id_list);
+    // console.log(recipes_id_list);
 
     let info_array = await getRecipesInfo(recipes_id_list);
 
-    console.log("info_array: ", info_array);
+    // console.log("info_array: ", info_array);
 
     return info_array;
 }
