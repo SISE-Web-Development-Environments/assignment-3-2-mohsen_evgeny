@@ -58,5 +58,4 @@ CREATE TABLE [dbo].[Login](
 --  WHERE Recipe.AuthorUserId = '855eb12b-e310-497b-a66c-e88007dedc59' and FamilyRecipe.UserId is NULL
 
 
-select * from InstructionsRecipe where RecipeId ='26df195b-ecc0-4d7d-85ec-7a562eb85c10' 
-Ins
+select * from IngredientsRecipe 

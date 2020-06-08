@@ -113,6 +113,19 @@ function extractFullRelevantRecipeData(recipes_Info){
         extendedIngredients,
     } = recipes_Info.data;
 
+    //return instructions with only step and number
+    let instructionsFixed = analyzedInstructions[0].steps;
+
+    for(let keyValue of instructionsFixed) {
+        delete keyValue.ingredients;
+        delete keyValue.equipment;
+      }
+    
+    let ingredientsFixed =[];
+    for(let keyValue of extendedIngredients) {
+        ingredientsFixed.push(keyValue.originalString);
+      }
+    
     return{
         id: id,
         title: title,
@@ -123,8 +136,8 @@ function extractFullRelevantRecipeData(recipes_Info){
         glutenFree: glutenFree,
         image: image,
         servings: servings,
-        analyzedInstructions: analyzedInstructions,
-        extendedIngredients: extendedIngredients,
+        instructions: instructionsFixed,
+        ingredients: ingredientsFixed,
     }
     
 }
