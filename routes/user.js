@@ -32,11 +32,11 @@ router.get("/recipeInfo/:ids",
 });
 
 
-router.get('/:userid/favorites', 
+router.get('/favorites', 
  async (req, res, next) => {
   try{
-    const userId = req.params.userid;
-    const userFavoriteRecipesIds = await DButils.getUserFavoriteRecipes(userId); // return a list of recipe id
+    const user = req.user;
+    const userFavoriteRecipesIds = await DButils.getUserFavoriteRecipes(user); // return a list of recipe id
     const userFavoriteRecipes = await search_recipes.getRecipesInfo(userFavoriteRecipesIds); // return the full info of each recipe 
     res.send(userFavoriteRecipes);
   }catch(error){
@@ -44,11 +44,11 @@ router.get('/:userid/favorites',
   }
 });
 
-router.get('/:userid/myrecipes',
+router.get('/myrecipes',
  async (req, res, next) => {
   try{
-    const userId = req.params.userid;
-    const userPersonalRecipesIds = await DButils.getUserPersonalRecipes(userId);
+    const user = req.user;
+    const userPersonalRecipesIds = await DButils.getUserPersonalRecipes(user);
     res.send(userPersonalRecipesIds);  
   }catch(error){
     next(error);

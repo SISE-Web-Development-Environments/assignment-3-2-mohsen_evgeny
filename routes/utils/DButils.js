@@ -37,16 +37,6 @@ exports.getUserIdByName = async function (username){
   return await this.execQuery( `SELECT UserId FROM [Login] WHERE UserName = '${username}'`);
 }
 
-// exports.getUserIdByName = async function (username){
-//   return await this.execQuery( `SELECT UserId FROM [Login] WHERE UserName = '${username}'`);
-// }
-
-// exports.getUserId = async function getUserId(username){
-//   return await this.execQuery( `SELECT UserId FROM [Login] WHERE UserName = '${username}'`);
-// }
-
-// SELECT * FROM UserRecipe WHERE UserName = '${username}'  and RecipeId =
-
 exports.getUserInfoOnRecipes = async function(user, ids){
   let info = [];
   
@@ -61,9 +51,9 @@ exports.getUserInfoOnRecipes = async function(user, ids){
   return info;
 }
 // -------------------------------- Favorite -----------------------------------
-exports.getUserFavoriteRecipes = async function (userId){ 
+exports.getUserFavoriteRecipes = async function (user){ 
   //select RecipeApiId from [dbo].[UserRecipe] where UserId = 'f6d161fa-9578-46c9-b6a6-ee2d0a531b0c' and isSaved = 1
-  let result = await this.execQuery( `select RecipeApiId from [UserRecipe] where UserId = '${userId}' and isSaved = 1`);
+  let result = await this.execQuery( `select RecipeApiId from [UserRecipe] where UserId = '${user[0].UserId}' and isSaved = 1`);
   let info = [];
   //console.log(result);
   for(let id of result) {
@@ -73,10 +63,10 @@ exports.getUserFavoriteRecipes = async function (userId){
   return info;
 }
 // -------------------------------- Personal  -----------------------------------
-exports.getUserPersonalRecipes = async function (userId){ 
+exports.getUserPersonalRecipes = async function (user){ 
   let result = await this.execQuery( ` SELECT [Recipe].* FROM [Recipe] 
   FULL JOIN [FamilyRecipe] ON [Recipe].RecipeId = [FamilyRecipe].RecipeId
-  WHERE [Recipe].AuthorUserId = '${userId}' and [FamilyRecipe].UserId is NULL`);
+  WHERE [Recipe].AuthorUserId = '${user[0].UserId}' and [FamilyRecipe].UserId is NULL`);
   //console.log(result);
   for(let keyValue of result) {
     delete keyValue.AuthorUserId;
