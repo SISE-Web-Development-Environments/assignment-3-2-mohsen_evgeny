@@ -113,7 +113,7 @@ exports.updateUserInfoOnRecipes = async function(user, id, isSaved){
 // --------------------------------  3 watched -----------------------------------
 exports.getThreeLastWatchedIds = async function(user){
   let ids = [];
-  let rawIds = await this.execQuery(`SELECT top 3 RecipeApiId from UserRecipe where UserId = CONVERT(uniqueidentifier, 'F6D161FA-9578-46C9-B6A6-EE2D0A531B0C') ORDER BY WatchDate DESC`);
+  let rawIds = await this.execQuery(`SELECT top 3 RecipeApiId from UserRecipe where UserId = CONVERT(uniqueidentifier, '${user[0].UserId}') ORDER BY WatchDate DESC`);
 
   rawIds.map((rawId) =>{
     ids.push(rawId.RecipeApiId);
