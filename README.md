@@ -2,7 +2,7 @@
 Mohsen Abdalla - 318984697 <br />
 Evgeny Umansky - 332375252
 
-# Link to API:
+# Link to updated API:
 https://app.swaggerhub.com/apis/mohsenab98/foodrecipe/2.0.0#/
 
 # About:
