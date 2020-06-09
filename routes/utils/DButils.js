@@ -17,7 +17,7 @@ const pool = new sql.ConnectionPool(config);
 const poolConnect = pool
   .connect()
   .then(() => console.log("new connection pool Created"))
-  .catch((err) => console.log(err));
+  .catch((err) => console.log("Bad SQL request"));
 
 
 // -------------------- call DB ---------------------
@@ -27,8 +27,7 @@ exports.execQuery = async function (query) {
     var result = await pool.request().query(query);
     return result.recordset;
   } catch (err) {
-    console.error("SQL error", err);
-    throw err;
+    console.error("SQL error");
   }
 };
 
