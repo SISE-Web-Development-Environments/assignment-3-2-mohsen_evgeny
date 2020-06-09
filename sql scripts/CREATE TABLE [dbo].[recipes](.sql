@@ -10,7 +10,6 @@ CREATE TABLE [dbo].[Recipe](
 	[isVegan] [BIT] NOT NULL DEFAULT 0,
 	[isGlutenFree] [BIT] NOT NULL DEFAULT 0,
 	[ImageUrl] [varchar](MAX),
-	[isClickableImage] [BIT] NOT NULL DEFAULT 0,
 	PRIMARY KEY (RecipeId),
 	FOREIGN KEY (AuthorUserId) REFERENCES [Login](UserId)
 )
@@ -28,8 +27,8 @@ CREATE TABLE [dbo].[IngredientsRecipe](
 -- How to cook a recipe
 CREATE TABLE [dbo].[InstructionsRecipe](
 	[RecipeId] [UNIQUEIDENTIFIER] NOT NULL,
-	[StepNumber] [INT] NOT NULL,
-	[StepDescription] [varchar](MAX) NOT NULL,
+	[number] [INT] NOT NULL,
+	[step] [varchar](MAX) NOT NULL,
 	PRIMARY KEY (RecipeId, StepNumber),
 	FOREIGN KEY (RecipeId) REFERENCES [Recipe](RecipeId)
 )
