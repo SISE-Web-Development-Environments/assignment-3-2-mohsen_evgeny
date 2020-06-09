@@ -1,13 +1,13 @@
 var express = require("express");
 var router = express.Router();
 const DButils = require("./utils/DButils");
-const bcrypt = require("bcrypt");
+const search_recipes = require("./utils/search_recipes");
 
 // ------------------- Authentication - middleware - using cookie ------------------
-router.use((req, res, next) =>{
+router.use(async (req, res, next) =>{
   if(req.session && req.session.user_id){
     const id = req.session.user_id;
-    const user =  DButils.checkUserNameOnDb(id); 
+    const user = await DButils.getUserIdByName(id);
     if(user){
       req.user = user;
       next(); // if true go to the next relative endpoint
@@ -17,14 +17,104 @@ router.use((req, res, next) =>{
 
 //--------------------- EndPoints ----------------------
 
-router.get("/recipeInfo/:ids", (req, res) => {
-  //using JSON parse to get array of integers instead of array of strings
-  const ids = JSON.parse(req.params.ids);
- // const ids = req.params.ids.replace("[", "").replace("]", "").replace(" ", "").split(",");
-  const user_name = req.user;
-  console.log(ids, user_name);
-  const userRecipesData = DButils.getUserInfoOnRecipes(user_name, ids); // TODO: build function - go to DB and get foreach id if the user (watched, saved) 
-  res.send(userRecipesData);
+router.get("/recipeInfo/:ids",
+ async (req, res, next) => {
+  try{
+      //using JSON parse to get array of integers instead of array of strings
+    const ids = JSON.parse(req.params.ids);
+    const user_id = req.user;
+    // console.log(ids, user_id);
+    const userRecipesData = await DButils.getUserInfoOnRecipes(user_id, ids); 
+    res.send(userRecipesData);
+  }catch(error){
+    next(error);
+  }
+});
+
+
+router.get('/favorites', 
+ async (req, res, next) => {
+  try{
+    const user = req.user;
+    const userFavoriteRecipesIds = await DButils.getUserFavoriteRecipes(user); // return a list of recipe id
+    const userFavoriteRecipes = await search_recipes.getRecipesInfo(userFavoriteRecipesIds); // return the full info of each recipe 
+    res.send(userFavoriteRecipes);
+  }catch(error){
+    next(error);
+  }
+});
+
+router.get('/myrecipes',
+ async (req, res, next) => {
+  try{
+    const user = req.user;
+    const userPersonalRecipesIds = await DButils.getUserPersonalRecipes(user);
+    res.send(userPersonalRecipesIds);  
+  }catch(error){
+    next(error);
+  }
+  
+});
+
+
+// req.body: {"isSaved": "0/1"}
+router.post("/recipeInfo/add/:id",
+ async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const user = req.user;
+    const isSaved = req.body.isSaved;
+
+    // console.log(id, user, isSaved);
+    await DButils.setUserInfoOnRecipes(user, id, isSaved);
+    res.status(201).send({ message: "recipe info for user is inserted", success: true });
+  } 
+  catch (error) {
+    next(error);
+  }
+});
+
+// req.body: {"isSaved": "0/1"}
+router.put("/recipeInfo/update/:id",
+ async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const user = req.user;
+    const isSaved = req.body.isSaved;
+
+    // console.log(id, user, isSaved);
+    await DButils.updateUserInfoOnRecipes(user, id, isSaved);
+    res.status(201).send({ message: "recipe info for user is updated", success: true });
+  } 
+  catch (error) {
+    next(error);
+  }
+});
+
+router.get("/watched",
+ async (req, res, next) => {
+  try{
+    const user = req.user;
+    const recipeIds = await DButils.getThreeLastWatchedIds(user);
+  
+    let watchedWithGeneralDetails = await search_recipes.getRecipesInfo(recipeIds);
+    res.send(watchedWithGeneralDetails);
+  }catch(error){
+    next(error);
+  }
+  
+});
+
+router.get("/family",
+ async (req, res, next) => {
+  try{
+    const user = req.user;
+    const familyRecipes = await DButils.getFamilyRecipes(user);
+    res.send(familyRecipes);
+  }catch(error){
+    next(error);
+  }
+  
 });
 
 module.exports = router;

@@ -37,66 +37,78 @@ exports.getUserIdByName = async function (username){
   return await this.execQuery( `SELECT UserId FROM [Login] WHERE UserName = '${username}'`);
 }
 
-// exports.getUserId = async function getUserId(username){
-//   return await this.execQuery( `SELECT UserId FROM [Login] WHERE UserName = '${username}'`);
-// }
-
-// SELECT * FROM UserRecipe WHERE UserName = '${username}'  and RecipeId =
-async function getUserInfoOnRecipes(username, ids){
+exports.getUserInfoOnRecipes = async function(user, ids){
   let info = [];
   
   for(let id of ids) {
-    let recipeUserTable = "";
-    if(id.includes("-")){
-      recipeUserTable = "UserRecipe";
-    }
-    else{
-      recipeUserTable = "UserRecipeApi";
-    }
+    let query = `SELECT * FROM UserRecipe WHERE UserId = CONVERT(uniqueidentifier, '${user[0].UserId}') and RecipeApiId = '${id}'`;
+    let queryResult = await this.execQuery(query);
 
-    let query = `SELECT * FROM ` + recipeUserTable + ` WHERE UserName = '${username}'  and RecipeId = '${id}'`;
-    let queryResult = this.execQuery(query);
-
-    if(!queryResult){
-      info.push({id: [false, false]});
-    }
-    else{
-      info.push({id: [true, queryResult[2]]});
-    }
+    //{key:"key", value:"value"}
+    info.push({[id]: {watched: queryResult[0].isWatched, saved: queryResult[0].isSaved}});
   }
 
   return info;
 }
+// -------------------------------- Favorite -----------------------------------
+exports.getUserFavoriteRecipes = async function (user){ 
+  //select RecipeApiId from [dbo].[UserRecipe] where UserId = 'f6d161fa-9578-46c9-b6a6-ee2d0a531b0c' and isSaved = 1
+  let result = await this.execQuery( `select RecipeApiId from [UserRecipe] where UserId = '${user[0].UserId}' and isSaved = 1`);
+  let info = [];
+  //console.log(result);
+  for(let id of result) {
+    info.push(id.RecipeApiId);
+  }
+  //console.log(info);
+  return info;
+}
+// -------------------------------- Personal  -----------------------------------
+exports.getUserPersonalRecipes = async function (user){ 
+  let result = await this.execQuery( ` SELECT [Recipe].* FROM [Recipe] 
+  FULL JOIN [FamilyRecipe] ON [Recipe].RecipeId = [FamilyRecipe].RecipeId
+  WHERE [Recipe].AuthorUserId = '${user[0].UserId}' and [FamilyRecipe].UserId is NULL`);
+  //console.log(result);
+  for(let keyValue of result) {
+    delete keyValue.AuthorUserId;
+  }
+  //console.log(info);
+  return result;
+}
+
+// -------------------------------- Family  -----------------------------------
+exports.getFamilyRecipes = async function (user){
+  return await this.execQuery(`SELECT * FROM [FamilyRecipe] WHERE UserId = (CONVERT(uniqueidentifier, '${user[0].UserId}'))`);
+}
+
+//--------------------------------- get Instructions & Ingrediants ------------------------------------
+
+exports.getIngredientsDb = async function (recipeId){
+  return await this.execQuery(`select * from IngredientsRecipe where RecipeId ='${recipeId}'`);
+}
+
+exports.getInstructionsDb = async function (recipeId){
+  return await this.execQuery(`select * from InstructionsRecipe where RecipeId ='${recipeId}'`);
+}
 
 
-exports.getUserInfoOnRecipes = getUserInfoOnRecipes;
+// -------------------------------- set and update user recipe info -----------------------------------
+exports.setUserInfoOnRecipes = async function(user, id, isSaved){
+  await this.execQuery(`INSERT INTO UserRecipe VALUES(CONVERT(uniqueidentifier, '${user[0].UserId}'), '${id}', '1', '${isSaved}', GETDATE())`);
+}
 
-// process.on("SIGINT", function () {
-//   if (pool) {
-//     pool.close(() => console.log("connection pool closed"));
-//   }
-// });
+exports.updateUserInfoOnRecipes = async function(user, id, isSaved){
+  await this.execQuery(`UPDATE UserRecipe SET isSaved = '${isSaved}', WatchDate = GETDATE() WHERE UserId = CONVERT(uniqueidentifier, '${user[0].UserId}') and RecipeApiId = '${id}'`);
+}
 
-// poolConnect.then(() => {
-//   console.log("pool closed");
+// --------------------------------  3 watched -----------------------------------
+exports.getThreeLastWatchedIds = async function(user){
+  let ids = [];
+  let rawIds = await this.execQuery(`SELECT top 3 RecipeApiId from UserRecipe where UserId = CONVERT(uniqueidentifier, '${user[0].UserId}') ORDER BY WatchDate DESC`);
 
-//   return sql.close();
-// });
+  rawIds.map((rawId) =>{
+    ids.push(rawId.RecipeApiId);
+  });
 
-// exports.execQuery = function (query) {
-//   return new Promise((resolve, reject) => {
-//     sql
-//       .connect(config)
-//       .then((pool) => {
-//         return pool.request().query(query);
-//       })
-//       .then((result) => {
-//         // console.log(result);
-//         sql.close();
-//         resolve(result.recordsets[0]);
-//       })
-//       .catch((err) => {
-//         // ... error checks
-//       });
-//   });
-// };
+  return ids;
+}
+
