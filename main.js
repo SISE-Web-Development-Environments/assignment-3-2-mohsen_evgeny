@@ -14,12 +14,22 @@ app.use(
     cookieName: "session", // the cookie key name
     secret: process.env.COOKIE_SECRET, // the encryption key
     duration: 20 * 60 * 1000, // expired after 20 sec
-    activeDuration: 0 // if expiresIn < activeDuration,
+    activeDuration: 0, // if expiresIn < activeDuration,
     //the session will be extended by activeDuration milliseconds
   })
 );
 app.use(express.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
 app.use(express.static(path.join(__dirname, "public"))); //To serve static files such as images, CSS files, and JavaScript files
+
+// ---------------cors--------------
+var cors = require("cors");
+const corsConfig = {
+  origin: true,
+  credentials: true,
+};
+
+app.use(cors(corsConfig));
+app.options("*", cors(corsConfig));
 
 var port = process.env.PORT || "3000";
 //------------------------- routes ------------------------------------------
@@ -34,7 +44,7 @@ app.use(function (req, res, next) {
       .then((users) => {
         if (users.find((x) => x.user_id === req.session.user_id)) {
           req.user_id = req.session.user_id;
-        }//as
+        } //as
         next();
       })
       .catch((error) => next());
@@ -56,7 +66,9 @@ app.use((req, res) => {
 });
 
 app.use(function (err, req, res, next) {
-  res.status(err.status || 500).send({ message: 'Bad request', success: false });
+  res
+    .status(err.status || 500)
+    .send({ message: "Bad request", success: false });
 });
 
 const server = app.listen(port, () => {
