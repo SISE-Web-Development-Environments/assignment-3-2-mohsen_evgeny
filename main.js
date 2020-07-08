@@ -16,6 +16,9 @@ app.use(
     duration: 20 * 60 * 1000, // expired after 20 sec
     activeDuration: 0, // if expiresIn < activeDuration,
     //the session will be extended by activeDuration milliseconds
+    cookie: {
+      httpOnly: false,
+    },
   })
 );
 app.use(express.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
