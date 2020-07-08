@@ -64,7 +64,7 @@ exports.getUserFavoriteRecipes = async function (user){
 // -------------------------------- Personal  -----------------------------------
 exports.getUserPersonalRecipes = async function (user){ 
   let result = await this.execQuery( ` SELECT [Recipe].* FROM [Recipe] 
-  FULL JOIN [FamilyRecipe] ON [Recipe].RecipeId = [FamilyRecipe].RecipeId
+  FULL JOIN [FamilyRecipe] ON [Recipe].id = [FamilyRecipe].RecipeId
   WHERE [Recipe].AuthorUserId = '${user[0].UserId}' and [FamilyRecipe].UserId is NULL`);
   //console.log(result);
   for(let keyValue of result) {
