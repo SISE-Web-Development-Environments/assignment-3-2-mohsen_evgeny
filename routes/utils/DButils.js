@@ -79,14 +79,18 @@ exports.getFamilyRecipes = async function (user){
   return await this.execQuery(`SELECT * FROM [FamilyRecipe] WHERE UserId = (CONVERT(uniqueidentifier, '${user[0].UserId}'))`);
 }
 
-//--------------------------------- get Instructions & Ingrediants ------------------------------------
+//--------------------------------- get PreInfo, Instructions & Ingrediants ------------------------------------
+
+exports.getRecipePreInfoDb = async function (recipeId){
+  return await this.execQuery(`select * from Recipe where id ='${recipeId}'`);
+}
 
 exports.getIngredientsDb = async function (recipeId){
-  return await this.execQuery(`select * from IngredientsRecipe where RecipeId ='${recipeId}'`);
+  return await this.execQuery(`select ingredient, amount from IngredientsRecipe where RecipeId ='${recipeId}'`);
 }
 
 exports.getInstructionsDb = async function (recipeId){
-  return await this.execQuery(`select * from InstructionsRecipe where RecipeId ='${recipeId}'`);
+  return await this.execQuery(`select number, step from InstructionsRecipe where RecipeId ='${recipeId}'`);
 }
 
 

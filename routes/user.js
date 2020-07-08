@@ -117,4 +117,34 @@ router.get("/family",
   
 });
 
+//personal recipe details (as show/apiId)
+router.get("/getPersonalRecipeInfo/:recipeID", 
+async (req, res, next) =>{
+  try{
+    // get all info about the recipe from DB
+    let info = await DButils.getRecipePreInfoDb(req.params.recipeID);
+    let ingredients = await DButils.getIngredientsDb(req.params.recipeID);
+    let instructions = await DButils.getInstructionsDb(req.params.recipeID);
+
+    // change format of ingredients like in show/apiId
+    let ingredientsStrings = [];
+
+    for(let i = 0; i < ingredients.length; i++){
+      let amountIngredientStr = ingredients[i].amount + " " + ingredients[i].ingredient;
+      ingredientsStrings[i] = amountIngredientStr;
+    }
+
+    // get array/json of all info
+    info[0]['instructions'] = [];
+    info[0]['ingredients'] = [];
+    info[0]['instructions'].push(instructions);
+    info[0]['ingredients'].push(ingredientsStrings);
+
+    res.send(info);
+  }catch(error){
+    next(error);
+  }
+    
+});
+
 module.exports = router;
